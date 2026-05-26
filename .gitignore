@@ -1,0 +1,16 @@
+# Системное
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Временные файлы
+*.tmp
+*.bak
+~$*
+
+# Большие файлы — хранить через Git LFS
+# *.pdf
+# *.dwg
+# *.jpg
+# *.png
+# *.mp4
