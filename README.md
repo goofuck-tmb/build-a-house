@@ -102,6 +102,17 @@
 
 ---
 
+## Быстрые ссылки
+
+- [💡 Идеи и заметки](02-build/notes.md)
+- [🗓️ План строительства](02-build/construction-plan.md)
+- [💰 Бюджет](03-finance/budget.md)
+- [📐 Описание проекта](01-project/project-description.md)
+- [📄 Выписка ЕГРН (полная, 28.05.2026)](05-documents/permits/egrn-extract-full-2026-05-28.pdf)
+- [📋 Все документы](05-documents/README.md)
+
+---
+
 ## Ключевые контакты
 
 | Роль         | Имя | Телефон | Примечание |
