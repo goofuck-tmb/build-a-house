@@ -128,6 +128,8 @@
 - [📐 Описание проекта](01-project/project-description.md)
 - [📄 Выписка ЕГРН (полная, 28.05.2026)](05-documents/permits/egrn-extract-full-2026-05-28.pdf)
 - [⚡ Договор ТП на электричество №42807588](05-documents/contracts/dogovor-tp-42807588-rosseti-2026-09-07.pdf)
+- [🔌 Схема уличного щитка (ВРУ)](07-schemas/electrics/panel.md)
+- [🔧 Схемы (электрика, трубы)](07-schemas/)
 - [📋 Все документы](05-documents/README.md)
 
 ---
