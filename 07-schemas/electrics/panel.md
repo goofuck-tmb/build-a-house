@@ -85,33 +85,6 @@ flowchart TD
   REST --> E6["Серв. розетка · 1P C10"]
 ```
 
-### Куда идут N и PE (TN-C-S, цветом)
-
-Легенда: 🟩 **PE — земля** (зелёный) · 🟦 **N — рабочий ноль** (синий) · фазы (серый).
-
-```mermaid
-flowchart TD
-  PEN["PEN с опоры<br/>3 фазы + PEN"] --> SPLIT["Точка расщепления PEN<br/>(одна перемычка)"]
-  SPLIT --> PEBUS["Шина PE / ГЗШ<br/>на корпусе"]
-  SPLIT --> NBUS["Шина N<br/>на изоляторе"]
-  PEBUS --> KORP["Корпус щита"]
-  PEBUS --> KONTUR["Контур заземления<br/>≤30 Ом"]
-  PEBUS --> PELOAD["PE-жила к нагрузкам<br/>дом, розетки, камеры..."]
-  NBUS --> NDIF["N сквозь дифавтоматы<br/>рабочий ноль"]
-  NDIF --> NLOAD["N к нагрузкам"]
-
-  classDef pe fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20;
-  classDef n fill:#bbdefb,stroke:#1565c0,color:#0d47a1;
-  class PEBUS,KORP,KONTUR,PELOAD pe;
-  class NBUS,NDIF,NLOAD n;
-  linkStyle 1 stroke:#2e7d32,stroke-width:2px;
-  linkStyle 3,4,5 stroke:#2e7d32,stroke-width:2px;
-  linkStyle 2 stroke:#1565c0,stroke-width:2px;
-  linkStyle 6,7 stroke:#1565c0,stroke-width:2px;
-```
-
-> Ключевое: PE и N соединены **только** в точке расщепления. Дальше зелёный (PE) идёт на корпус, контур и PE-жилой к нагрузкам (ток не несёт); синий (N) — сквозь дифавтоматы к нагрузкам (несёт рабочий ток). N с корпусом больше нигде не пересекается.
-
 ---
 
 ## Рекомендации
