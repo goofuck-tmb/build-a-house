@@ -155,5 +155,5 @@ README.md              — главная: статус, бюджет, расх�
 04-contractors/        — contacts.md, reviews.md
 05-documents/          — permits/ (выписки ЕГРН), contracts/, warranties/
 06-maintenance/        — счётчики, ТО (на будущее)
-07-schemas/            — электрика, трубы, котёл (на будущее)
+07-schemas/            — электрика (panel.md — схема щита, panel-layout.html/png — монтажная, shopping-list.md — чек-лист покупок), трубы, котёл
 ```
