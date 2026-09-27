@@ -6,18 +6,18 @@
     --plate:#e9ecf0; --rail:#9aa3b2; --dev:#ffffff; --devline:#6b7484; --devtext:#1c2230;
     --duct:#f7f8fa; --halo:#ffffff; --accent:#c2410c; --chip:#eef0f3; --chipon:#1c2230; --chipontext:#ffffff;
     --pe:#2f9e44; --pe2:#f2c94c; --n:#1f66d0; --l1:#8a5a2b; --l2:#1f1f1f; --l3:#8c929c; --dim:0.12;
-    --ok:#2f9e44; --warn:#d97706;
+    --ok:#2f9e44; --warn:#d97706; --cur:#fde8dc;
   }
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
     --bg:#15181e; --panel:#1d2129; --ink:#e8eaee; --muted:#9aa3b2; --line:#2f3541;
     --plate:#262b34; --rail:#6b7484; --dev:#2b313b; --devline:#8b95a5; --devtext:#e8eaee;
     --duct:#1f242c; --halo:#15181e; --accent:#f97a3c; --chip:#2a3038; --chipon:#e8eaee; --chipontext:#15181e;
-    --l2:#0a0a0a; color-scheme:dark; }}
+    --l2:#0a0a0a; --cur:#3a2418; color-scheme:dark; }}
   :root[data-theme="dark"]{
     --bg:#15181e; --panel:#1d2129; --ink:#e8eaee; --muted:#9aa3b2; --line:#2f3541;
     --plate:#262b34; --rail:#6b7484; --dev:#2b313b; --devline:#8b95a5; --devtext:#e8eaee;
     --duct:#1f242c; --halo:#15181e; --accent:#f97a3c; --chip:#2a3038; --chipon:#e8eaee; --chipontext:#15181e;
-    --l2:#0a0a0a; color-scheme:dark; }
+    --l2:#0a0a0a; --cur:#3a2418; color-scheme:dark; }
   *{box-sizing:border-box}
   body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;line-height:1.45;padding-inline:16px;padding-block:16px 40px;max-width:1180px;margin-inline:auto}
   h1{font-size:24px;font-weight:600;margin:0 0 4px;text-wrap:balance}
@@ -50,6 +50,9 @@
   th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
   tr.row{cursor:pointer} tr.row:hover td{background:var(--chip)} tr.row.sel td{background:var(--chip);box-shadow:inset 3px 0 0 var(--accent)}
   td.num{font-variant-numeric:tabular-nums;color:var(--muted);width:36px}
+  tr.grp td{background:var(--chip);font-weight:600;font-size:12px;letter-spacing:.04em;padding:8px}
+  tr.grp.cur td{background:var(--accent);color:var(--chipontext)}
+  tr.row.cur td{background:var(--cur)}
   .notes{margin-top:18px;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:12px 16px}
   .notes h2{font-size:15px;margin:0 0 8px}
   .notes ol{margin:0;padding-left:20px;max-width:70ch}
@@ -117,7 +120,7 @@
 </div>
 
 <table id="tbl">
-  <thead><tr><th>№</th><th>Откуда → куда</th><th>Провод</th><th>Сечение</th><th>Заметка</th></tr></thead>
+  <thead><tr><th>№</th><th>Этап</th><th>Откуда → куда</th><th>Провод</th><th>Сечение</th><th>Заметка</th></tr></thead>
   <tbody></tbody>
 </table>
 
@@ -129,6 +132,7 @@
     <li><b>Автоматы разложены по купленному набору:</b> C16 ×3 на розетки, C20 на ворота, беседку и резерв, C10 на свет, камеры и сервис с обогревом. Фаза каждого задана его местом на гребёнке.</li>
     <li><b>Расщепление PEN одно:</b> жила PEN кабеля 4×10 садится на шину PE, оттуда синяя перемычка 10 мм² на клемму N вводного автомата. Больше N и PE нигде не соединяются.</li>
     <li><b>Шина N групп принимает только нули ветки «остальное»</b> (после ДИФ-103). Нули дома, реле и УЗИП идут на кросс-модуль. Перепутаешь, ДИФ-103 будет выбивать.</li>
+    <li><b>УЗИП включён параллельно.</b> Через него ничего не проходит дальше: реле и дифавтоматы питаются с кросс-модуля. Единственный его «выход» на шину PE, туда он сбрасывает импульс.</li>
     <li><b>Провода УЗИП короткие:</b> от кросс-модуля к УЗИП и от УЗИП к шине PE в сумме не длиннее 0,5 м.</li>
     <li><b>Выход каждого реле идёт на два дифа</b> одним сдвоенным наконечником НШВИ(2) 6 мм². Проверь, что клемма Welrok его принимает, иначе поставь между ними клеммник.</li>
     <li><b>Кабели ВВГ (ввод, дом, группы) заводятся в клеммы без наконечников:</b> они монолитные. НШВИ только на гибкий ПуГВ внутри щита.</li>
@@ -153,7 +157,7 @@ const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита
 // ---- devices on rails
 const DEV=[
  {id:'S204',rail:0,pos:0,w:4,name:'ABB S204 C25',sub:'вводной автомат 4P',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
- {id:'UZIP',rail:0,pos:4,w:4,name:'УЗИП Citel DS134R',sub:'тип 1+2, 3P+N',top:['L1','L2','L3','N'],bot:['PE']},
+ {id:'UZIP',rail:0,pos:4,w:4,name:'УЗИП Citel DS134R',sub:'тип 1+2, параллельно, транзита нет',top:['L1','L2','L3','N'],bot:['PE']},
  {id:'X',rail:0,pos:8,w:4,name:'Кросс-модуль 4P',sub:'100 А, раздача',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N'],both:true},
  {id:'R1',rail:1,pos:0,w:3,name:'Реле напряж. L1',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
  {id:'R2',rail:1,pos:3,w:3,name:'Реле напряж. L2',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
@@ -360,10 +364,11 @@ W.forEach((w,i)=>{ w.i=i+1; w.pts=route(w); const d='M'+w.pts.map(p=>p.join(' ')
 const condOn={L1:1,L2:1,L3:1,N:1,PE:1}, stOn={1:1,2:1,3:1,4:1,5:1,6:1}; let maxStep=6, sel=null;
 const info=document.getElementById('info'), tbody=document.querySelector('#tbl tbody');
 function label(ep){ if(ep==='PE')return 'шина PE (ГЗШ)'; if(ep==='NB')return 'шина N групп'; if(ep==='CORP')return 'корпус щита'; if(ep.startsWith('COMB.'))return 'гребёнка, '+ep.slice(5); const [id,a,b]=ep.split('.'); const d=devById[id]; const t=b||a; return d.name+(d.sub?' ('+d.sub+')':'')+', клемма '+t+(b?(a==='top'?' верх':' низ'):''); }
-function visible(w){ return condOn[w.c]&&stOn[w.st]&&w.st<=maxStep; }
+function visible(w){ return condOn[w.c]&&stOn[w.st]; }
 function apply(){ W.forEach(w=>{ const v=visible(w); w.g.classList.toggle('dim',!v); w.g.classList.toggle('hl',sel===w.i); }); renderTable(); }
-function renderTable(){ tbody.innerHTML=''; W.filter(visible).forEach(w=>{ const tr=document.createElement('tr'); tr.className='row'+(sel===w.i?' sel':''); tr.dataset.i=w.i;
-  tr.innerHTML=`<td class="num">${w.i}</td><td>${label(w.f)} → ${label(w.t)}</td><td><span class="sw ${w.c==='PE'?'pe':''}" style="border-color:${CC[w.c]}"></span> ${w.c}</td><td class="mono">${w.sq}</td><td class="hint">${w.n||''}</td>`;
+function renderTable(){ tbody.innerHTML=''; let last=null; W.filter(visible).forEach(w=>{ const cur=maxStep<6&&w.st===maxStep; if(w.st!==last){ last=w.st; const h=document.createElement('tr'); h.className='grp'+(cur?' cur':''); h.innerHTML=`<td colspan="6">Этап ${w.st}. ${STN[w.st]}</td>`; tbody.appendChild(h); }
+  const tr=document.createElement('tr'); tr.className='row'+(sel===w.i?' sel':'')+(cur?' cur':''); tr.dataset.i=w.i;
+  tr.innerHTML=`<td class="num">${w.i}</td><td class="num">${w.st}</td><td>${label(w.f)} → ${label(w.t)}</td><td><span class="sw ${w.c==='PE'?'pe':''}" style="border-color:${CC[w.c]}"></span> ${w.c}</td><td class="mono">${w.sq}</td><td class="hint">${w.n||''}</td>`;
   tr.addEventListener('click',()=>{ sel=sel===w.i?null:w.i; apply(); showWire(w); }); tbody.appendChild(tr); }); }
 function showWire(w){ if(!w){ info.innerHTML='<h3>Выбрано</h3><div class="hint">Ничего не выбрано.</div>'; return; }
   info.innerHTML=`<h3>Провод № ${w.i} · этап ${w.st}, ${STN[w.st]}</h3><div class="big">${CN[w.c]}</div><dl><dt>Откуда</dt><dd>${label(w.f)}</dd><dt>Куда</dt><dd>${label(w.t)}</dd><dt>Сечение</dt><dd class="mono">${w.sq}</dd>${w.n?'<dt>Заметка</dt><dd>'+w.n+'</dd>':''}</dl>`; }
@@ -375,7 +380,7 @@ devGroup.addEventListener('click',e=>{ const g=e.target.closest('g.devg'); if(!g
 document.querySelectorAll('[data-cond]').forEach(b=>b.addEventListener('click',()=>{ condOn[b.dataset.cond]^=1; b.classList.toggle('on'); apply(); }));
 document.querySelectorAll('[data-stage]').forEach(b=>b.addEventListener('click',()=>{ stOn[b.dataset.stage]^=1; b.classList.toggle('on'); apply(); }));
 const step=document.getElementById('step'), stepname=document.getElementById('stepname');
-step.addEventListener('input',()=>{ maxStep=+step.value; stepname.textContent=maxStep===0?'Только раскладка, без проводов':(maxStep===6?'Все этапы':'Этапы 1–'+maxStep+': '+STN[maxStep]); apply(); });
+step.addEventListener('input',()=>{ maxStep=+step.value; for(const k in stOn) stOn[k]=(+k<=maxStep)?1:0; document.querySelectorAll('[data-stage]').forEach(b=>b.classList.toggle('on',+b.dataset.stage<=maxStep)); stepname.textContent=maxStep===0?'Только раскладка, без проводов':(maxStep===6?'Все этапы':'Этапы 1–'+maxStep+': '+STN[maxStep]); apply(); });
 document.getElementById('reset').addEventListener('click',()=>{ for(const k in condOn)condOn[k]=1; for(const k in stOn)stOn[k]=1; maxStep=6; step.value=6; stepname.textContent='Все этапы'; sel=null; document.querySelectorAll('.chip[data-cond],.chip[data-stage]').forEach(b=>b.classList.add('on')); apply(); showWire(null); });
 apply();
 })();
