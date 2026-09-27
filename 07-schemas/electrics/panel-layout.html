@@ -127,9 +127,9 @@
 <div class="notes">
   <h2>Что учесть при сборке</h2>
   <ol>
-    <li><b>Ширина аппаратов в модулях взята по памяти</b> <span class="tag">проверить</span>: S204 4, Citel DS134R 4, кросс-модуль 4, Welrok d2-50 по 3, Iskra и ДИФ-103 по 4, S201 по 1, Finder 3, термостат 1. Итого 45 из 48. Если Welrok на 2 модуля, освободится ещё 3.</li>
-    <li><b>Две розетки Finder из трёх не влезают.</b> На схеме одна, как сервисная. Две остальные лучше не ставить или заменить наружными IP54.</li>
-    <li><b>Автоматы разложены по купленному набору:</b> C16 ×3 на розетки, C20 на ворота, беседку и резерв, C10 на свет, камеры и сервис с обогревом. Фаза каждого задана его местом на гребёнке.</li>
+    <li><b>Ширина аппаратов в модулях взята по памяти</b> <span class="tag">проверить</span>: S204 4, Citel DS134R 4, кросс-модуль 4, Welrok d2-50 по 2, Iskra и ДИФ-103 по 4, S201 по 1, Finder по 3, термостат 1. Итого 45 из 48. Если Welrok окажутся по 3 модуля, третья Finder уже не влезет: тогда либо одну Finder не ставить, либо взять реле уже.</li>
+    <li><b>Розетки:</b> три Finder внутри щита, по одной на каждую фазу (на C16 ×3), и одна влагозащищённая ЭРА IP65 снаружи на корпусе. Наружная сейчас на C20 «нар. роз.»; правильнее докупить один S201 C16 и поставить её на него, а C20 оставить в запас.</li>
+    <li><b>Автоматы разложены по купленному набору:</b> C16 ×3 на розетки Finder, C20 на ворота, беседку и наружную розетку, C10 на свет, камеры и обогрев. Фаза каждого задана его местом на гребёнке.</li>
     <li><b>Расщепление PEN одно:</b> жила PEN кабеля 4×10 садится на шину PE, оттуда синяя перемычка 10 мм² на клемму N вводного автомата. Больше N и PE нигде не соединяются.</li>
     <li><b>Шина N групп принимает только нули ветки «остальное»</b> (после ДИФ-103). Нули дома, реле и УЗИП идут на кросс-модуль. Перепутаешь, ДИФ-103 будет выбивать.</li>
     <li><b>УЗИП включён параллельно.</b> Через него ничего не проходит дальше: реле и дифавтоматы питаются с кросс-модуля. Единственный его «выход» на шину PE, туда он сбрасывает импульс.</li>
@@ -157,16 +157,17 @@ const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита
 // ---- devices on rails
 const DEV=[
  {id:'S204',rail:0,pos:0,w:4,name:'ABB S204 C25',sub:'вводной автомат 4P',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
- {id:'UZIP',rail:0,pos:4,w:4,name:'УЗИП Citel DS134R',sub:'тип 1+2, параллельно, транзита нет',top:['L1','L2','L3','N'],bot:['PE']},
+ {id:'UZIP',rail:0,pos:4,w:4,name:'УЗИП Citel DS134R',sub:'тип 1+2, параллельно',top:['L1','L2','L3','N'],bot:['PE']},
  {id:'X',rail:0,pos:8,w:4,name:'Кросс-модуль 4P',sub:'100 А, раздача',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N'],both:true},
- {id:'R1',rail:1,pos:0,w:3,name:'Реле напряж. L1',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
- {id:'R2',rail:1,pos:3,w:3,name:'Реле напряж. L2',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
- {id:'R3',rail:1,pos:6,w:3,name:'Реле напряж. L3',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
- {id:'TS',rail:1,pos:9,w:1,name:'Терм.',sub:'SILART',top:['L'],bot:['L']},
+ {id:'R1',rail:1,pos:0,w:2,name:'Реле L1',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
+ {id:'R2',rail:1,pos:2,w:2,name:'Реле L2',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
+ {id:'R3',rail:1,pos:4,w:2,name:'Реле L3',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
+ {id:'TS',rail:1,pos:6,w:1,name:'Терм.',sub:'SILART',top:['L'],bot:['L']},
+ {id:'FND1',rail:1,pos:7,w:3,name:'Розетка Finder L1',sub:'в щите, IP20',top:['L','N','PE'],bot:[],q:true},
  {id:'FREE1',rail:1,pos:10,w:2,free:true},
  {id:'ISK',rail:2,pos:0,w:4,name:'Iskra RFI4 C25 / 300 мА',sub:'ветка ДОМ',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
  {id:'D103',rail:2,pos:4,w:4,name:'ДИФ-103 C40 / 30 мА A',sub:'ветка ВСЁ ОСТАЛЬНОЕ',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
- {id:'FND',rail:2,pos:8,w:3,name:'Розетка Finder',sub:'сервис, IP20',top:['L','N','PE'],bot:[],q:true},
+ {id:'FND2',rail:2,pos:8,w:3,name:'Розетка Finder L2',sub:'в щите, IP20',top:['L','N','PE'],bot:[],q:true},
  {id:'FREE2',rail:2,pos:11,w:1,free:true},
  {id:'A1',rail:3,pos:0,w:1,name:'C16',sub:'роз. 1',top:['L'],bot:['L']},
  {id:'A2',rail:3,pos:1,w:1,name:'C16',sub:'роз. 2',top:['L'],bot:['L']},
@@ -174,10 +175,10 @@ const DEV=[
  {id:'A4',rail:3,pos:3,w:1,name:'C10',sub:'свет',top:['L'],bot:['L']},
  {id:'A5',rail:3,pos:4,w:1,name:'C20',sub:'ворота',top:['L'],bot:['L']},
  {id:'A6',rail:3,pos:5,w:1,name:'C20',sub:'беседка',top:['L'],bot:['L']},
- {id:'A7',rail:3,pos:6,w:1,name:'C20',sub:'резерв',top:['L'],bot:['L']},
- {id:'A8',rail:3,pos:7,w:1,name:'C10',sub:'серв.',top:['L'],bot:['L']},
+ {id:'A7',rail:3,pos:6,w:1,name:'C20',sub:'нар. роз.',top:['L'],bot:['L']},
+ {id:'A8',rail:3,pos:7,w:1,name:'C10',sub:'обогрев',top:['L'],bot:['L']},
  {id:'A9',rail:3,pos:8,w:1,name:'C10',sub:'камеры',top:['L'],bot:['L']},
- {id:'FREE3',rail:3,pos:9,w:3,free:true},
+ {id:'FND3',rail:3,pos:9,w:3,name:'Розетка Finder L3',sub:'в щите, IP20',top:['L','N','PE'],bot:[],q:true},
 ];
 const COMBX=[0,1,2]; // comb feed terminals above A1..A3
 // bottom row items: glands + heater
@@ -185,14 +186,13 @@ const BOT=[
  {id:'HEAT',x:20,w:118,name:'Нагреватель 150 Вт',sub:'на раме внизу',top:['L','N','PE'],kind:'box'},
  {id:'GIN',x:150,w:58,name:'M32',sub:'ввод 4×10',top:['L1','L2','L3','PEN'],kind:'gland'},
  {id:'GHOME',x:214,w:62,name:'M32',sub:'дом 5×6',top:['L1','L2','L3','N','PE'],kind:'gland'},
- {id:'G1',x:282,w:40,name:'M20',sub:'роз. 1',top:['L','N','PE'],kind:'gland'},
- {id:'G2',x:326,w:40,name:'M20',sub:'роз. 2',top:['L','N','PE'],kind:'gland'},
- {id:'G3',x:370,w:40,name:'M20',sub:'роз. 3',top:['L','N','PE'],kind:'gland'},
- {id:'G4',x:414,w:40,name:'M20',sub:'свет',top:['L','N','PE'],kind:'gland'},
- {id:'G5',x:458,w:40,name:'M20',sub:'ворота',top:['L','N','PE'],kind:'gland'},
- {id:'G6',x:502,w:40,name:'M20',sub:'беседка',top:['L','N','PE'],kind:'gland'},
- {id:'G9',x:546,w:40,name:'M20',sub:'камеры',top:['L','N','PE'],kind:'gland'},
- {id:'GPE',x:590,w:40,name:'M16',sub:'контур',top:['PE'],kind:'gland'},
+ {id:'GOUT',x:282,w:48,name:'M20',sub:'нар. роз.',top:['L','N','PE'],kind:'gland'},
+ {id:'G4',x:336,w:44,name:'M20',sub:'свет',top:['L','N','PE'],kind:'gland'},
+ {id:'G5',x:386,w:44,name:'M20',sub:'ворота',top:['L','N','PE'],kind:'gland'},
+ {id:'G6',x:436,w:44,name:'M20',sub:'беседка',top:['L','N','PE'],kind:'gland'},
+ {id:'G9',x:486,w:44,name:'M20',sub:'камеры',top:['L','N','PE'],kind:'gland'},
+ {id:'GSP',x:536,w:44,name:'M20',sub:'запас',top:[],kind:'gland'},
+ {id:'GPE',x:586,w:44,name:'M16',sub:'контур',top:['PE'],kind:'gland'},
 ];
 
 // ---- wires: from, to, cond, sq, stage, note.  Endpoints: "DEV.side.term" | "PE" | "NB" | "CORP" | "COMB.L1"
@@ -242,20 +242,22 @@ add('D103.bot.L1','COMB.L1','L1','ПуГВ 6',5,'Питание гребёнки
 add('D103.bot.L2','COMB.L2','L2','ПуГВ 6',5,'');
 add('D103.bot.L3','COMB.L3','L3','ПуГВ 6',5,'');
 add('D103.bot.N','NB','N','ПуГВ 6',5,'Единственный вход на шину N групп.');
-const GR=[['A1','G1','L1','ВВГ 3×2,5'],['A2','G2','L2','ВВГ 3×2,5'],['A3','G3','L3','ВВГ 3×2,5'],['A4','G4','L1','ВВГ 3×1,5'],['A5','G5','L2','ВВГ 3×2,5'],['A6','G6','L3','ВВГ 3×2,5'],['A9','G9','L3','ВВГ 3×1,5']];
+const GR=[['A4','G4','L1','ВВГ 3×1,5'],['A5','G5','L2','ВВГ 3×2,5'],['A6','G6','L3','ВВГ 3×2,5'],['A7','GOUT','L1','ВВГ 3×2,5'],['A9','G9','L3','ВВГ 3×1,5']];
 GR.forEach(([a,g,c,sq])=>{
   add(a+'.bot.L',g+'.top.L',c,sq,5,'Фаза этого автомата задана гребёнкой.');
   add('NB',g+'.top.N','N',sq,5,'Ноль группы только на шину N групп.');
   add('PE',g+'.top.PE','PE',sq,5,'PE группы на ГЗШ.');
 });
+[['A1','FND1','L1'],['A2','FND2','L2'],['A3','FND3','L3']].forEach(([a,f,c])=>{
+  add(a+'.bot.L',f+'.top.L',c,'ПуГВ 2,5',5,'Розетка внутри щита на фазе '+c+'. Три розетки нагружают три разные фазы.');
+  add('NB',f+'.top.N','N','ПуГВ 2,5',5,'');
+  add('PE',f+'.top.PE','PE','ПуГВ 2,5 ж/з',5,'');
+});
 // 6 сервис
-add('A8.bot.L','TS.top.L','L1','ПуГВ 1,5',6,'C10 «серв.» питает термостат и розетку Finder. Фаза L2 по месту на гребёнке.');
+add('A8.bot.L','TS.top.L','L1','ПуГВ 1,5',6,'C10 «обогрев» питает термостат. Фаза L2 по месту на гребёнке.');
 add('TS.bot.L','HEAT.top.L','L1','ПуГВ 1,5',6,'Термостат замыкает фазу на нагреватель при холоде.');
 add('NB','HEAT.top.N','N','ПуГВ 1,5',6,'');
 add('PE','HEAT.top.PE','PE','ПуГВ 1,5 ж/з',6,'');
-add('A8.bot.L','FND.top.L','L1','ПуГВ 2,5',6,'Сервисная розетка внутри щита.');
-add('NB','FND.top.N','N','ПуГВ 2,5',6,'');
-add('PE','FND.top.PE','PE','ПуГВ 2,5 ж/з',6,'');
 // phases of serv line are L2 by comb position (A8 is 8th = L2)
 W.forEach(w=>{ if(w.f.startsWith('A8.')||w.f.startsWith('TS.')) w.c='L2'; });
 
@@ -336,7 +338,7 @@ svg.appendChild(el('text',{x:PEBUS.x+PEBUS.w+30,y:PEBUS.y0-12,class:'ds'},'ко�
 // comb
 const cy=railY(3)-10; svg.appendChild(el('line',{x1:RX+2,y1:cy,x2:RX+9*U-2,y2:cy,class:'comb',stroke:'var(--devline)'}));
 [['L1',0],['L2',1],['L3',2]].forEach(([c,i])=>{ for(let m=i;m<9;m+=3){ svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:CC[c],'stroke-width':2.5})); } });
-svg.appendChild(el('text',{x:RX+9*U+6,y:cy+3,class:'ds'},'гребёнка 3ф'));
+svg.appendChild(el('text',{x:RX-10,y:cy+3,class:'ds','text-anchor':'end'},'гребёнка 3ф'));
 // devices
 const devGroup=el('g',{}); svg.appendChild(devGroup);
 function drawDev(d){
