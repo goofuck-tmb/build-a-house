@@ -5,7 +5,7 @@
     --bg:#f3f4f6; --panel:#ffffff; --ink:#1c2230; --muted:#5b6474; --line:#d5d9e0;
     --plate:#e9ecf0; --rail:#9aa3b2; --dev:#ffffff; --devline:#6b7484; --devtext:#1c2230;
     --duct:#f7f8fa; --halo:#ffffff; --accent:#c2410c; --chip:#eef0f3; --chipon:#1c2230; --chipontext:#ffffff;
-    --pe:#2f9e44; --pe2:#f2c94c; --n:#1f66d0; --l1:#8a5a2b; --l2:#1f1f1f; --l3:#8c929c; --dim:0.12;
+    --pe:#2f9e44; --pe2:#f2c94c; --n:#1f66d0; --l1:#d62828; --l2:#1f1f1f; --l3:#ffffff; --l3halo:#6b7484; --dim:0.12;
     --ok:#2f9e44; --warn:#d97706; --cur:#fde8dc;
   }
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
@@ -29,7 +29,7 @@
   .chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:4px 10px;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;user-select:none}
   .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .chip.on{background:var(--chipon);color:var(--chipontext);border-color:var(--chipon)}
-  .sw{width:22px;height:0;border-top:4px solid;border-radius:2px;display:inline-block}
+  .sw{width:22px;height:0;border-top:4px solid;border-radius:2px;display:inline-block;box-shadow:0 0 0 1px var(--line)}
   .sw.pe{border-top:4px solid var(--pe);position:relative}
   .sw.pe::after{content:"";position:absolute;left:0;right:0;top:-4px;border-top:4px dashed var(--pe2)}
   .steps{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -70,6 +70,8 @@
   .gland{fill:var(--dev);stroke:var(--devline);stroke-width:1}
   .w{fill:none;stroke-linejoin:round;stroke-linecap:round}
   .w.halo{stroke:var(--halo);stroke-width:5}
+  .w.halo.l3{stroke:var(--l3halo)}
+  g.wire.hl .halo.l3{stroke:var(--accent)}
   .w.core{stroke-width:2.2}
   .w.dash{stroke:var(--pe2);stroke-width:2.2;stroke-dasharray:5 5}
   .w.hit{stroke:transparent;stroke-width:12;cursor:pointer;pointer-events:stroke}
@@ -136,6 +138,7 @@
     <li><b>Провода УЗИП короткие:</b> от кросс-модуля к УЗИП и от УЗИП к шине PE в сумме не длиннее 0,5 м.</li>
     <li><b>Выход каждого реле идёт на два дифа</b> одним сдвоенным наконечником НШВИ(2) 6 мм². Проверь, что клемма Welrok его принимает, иначе поставь между ними клеммник.</li>
     <li><b>Кабели ВВГ (ввод, дом, группы) заводятся в клеммы без наконечников:</b> они монолитные. НШВИ только на гибкий ПуГВ внутри щита.</li>
+    <li><b>Цвета фаз:</b> L1 красный, L2 чёрный, L3 белый (коричневого и серого в продаже не было; ГОСТ это допускает). Белый ни с чем не путать: N только синий, PE только жёлто-зелёный. На концы фазных проводов бирки L1/L2/L3.</li>
     <li>Момент затяжки клемм смотри в паспорте аппарата, обычно 2–3 Н·м. Недотянутая клемма греется.</li>
   </ol>
 </div>
@@ -151,7 +154,7 @@ const NBUS={x:700,w:18,y0:railY(2),y1:BOTY-8};
 const VD={x0:640,x1:692};                  // right vertical duct lanes
 
 const CC={L1:'var(--l1)',L2:'var(--l2)',L3:'var(--l3)',N:'var(--n)',PE:'var(--pe)'};
-const CN={L1:'L1 коричневый',L2:'L2 чёрный',L3:'L3 серый',N:'N синий',PE:'PE жёлто-зелёный'};
+const CN={L1:'L1 красный',L2:'L2 чёрный',L3:'L3 белый',N:'N синий',PE:'PE жёлто-зелёный'};
 const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита',4:'Ветка «дом»',5:'Ветка «всё остальное»',6:'Сервис и обогрев'};
 
 // ---- devices on rails
@@ -315,7 +318,7 @@ function route(w){
 // ---- render
 const NS='http://www.w3.org/2000/svg';
 const svg=document.getElementById('svg');
-const el=(t,a,txt)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;};
+const el=(t,a,txt)=>{const e=document.createElementNS(NS,t);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;};
 // plate
 svg.appendChild(el('rect',{x:8,y:8,width:804,height:884,rx:8,class:'plate'}));
 for(let i=0;i<=4;i++) svg.appendChild(el('rect',{x:RX-4,y:ductY(i),width:RW+8,height:i===4?DH4:DH,class:'duct'}));
@@ -337,7 +340,7 @@ svg.appendChild(el('circle',{cx:PEBUS.x+PEBUS.w+22,cy:PEBUS.y0-16,r:4,class:'ter
 svg.appendChild(el('text',{x:PEBUS.x+PEBUS.w+30,y:PEBUS.y0-12,class:'ds'},'корпус'));
 // comb
 const cy=railY(3)-10; svg.appendChild(el('line',{x1:RX+2,y1:cy,x2:RX+9*U-2,y2:cy,class:'comb',stroke:'var(--devline)'}));
-[['L1',0],['L2',1],['L3',2]].forEach(([c,i])=>{ for(let m=i;m<9;m+=3){ svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:CC[c],'stroke-width':2.5})); } });
+[['L1',0],['L2',1],['L3',2]].forEach(([c,i])=>{ for(let m=i;m<9;m+=3){ if(c==='L3') svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:'var(--l3halo)','stroke-width':4.5})); svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:CC[c],'stroke-width':2.5})); } });
 svg.appendChild(el('text',{x:RX-10,y:cy+3,class:'ds','text-anchor':'end'},'гребёнка 3ф'));
 // devices
 const devGroup=el('g',{}); svg.appendChild(devGroup);
@@ -358,7 +361,7 @@ svg.appendChild(el('text',{x:RX,y:BOTY+68,class:'ds'},'низ щита: герм
 const wireGroup=el('g',{}); svg.appendChild(wireGroup);
 W.forEach((w,i)=>{ w.i=i+1; w.pts=route(w); const d='M'+w.pts.map(p=>p.join(' ')).join(' L ');
   const g=el('g',{class:'wire','data-i':w.i,'data-c':w.c,'data-st':w.st});
-  g.appendChild(el('path',{d,class:'w halo'})); g.appendChild(el('path',{d,class:'w core',stroke:CC[w.c]}));
+  g.appendChild(el('path',{d,class:'w halo'+(w.c==='L3'?' l3':'')})); g.appendChild(el('path',{d,class:'w core',stroke:CC[w.c]}));
   if(w.c==='PE') g.appendChild(el('path',{d,class:'w dash'}));
   g.appendChild(el('path',{d,class:'w hit'})); wireGroup.appendChild(g); w.g=g; });
 
