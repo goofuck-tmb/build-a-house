@@ -1,4 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Щит на трубостойке</title>
+<title>Щит на трубостойке</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   :root{
@@ -99,10 +99,9 @@
     <button class="chip on" data-stage="3">3 Защита</button>
     <button class="chip on" data-stage="4">4 Дом</button>
     <button class="chip on" data-stage="5">5 Остальное</button>
-    <button class="chip on" data-stage="6">6 Сервис</button>
   </div>
   <div class="steps"><span class="t">Пошагово</span>
-    <input type="range" id="step" min="0" max="6" value="6" aria-label="Показать этапы до">
+    <input type="range" id="step" min="0" max="5" value="5" aria-label="Показать этапы до">
     <span class="stepname" id="stepname">Все этапы</span>
     <button class="chip" id="reset">Сбросить</button>
   </div>
@@ -129,9 +128,10 @@
 <div class="notes">
   <h2>Что учесть при сборке</h2>
   <ol>
-    <li><b>Ширина аппаратов в модулях взята по памяти</b> <span class="tag">проверить</span>: S204 4, Citel DS134R 4, кросс-модуль 4, Welrok d2-50 по 2, Iskra и ДИФ-103 по 4, S201 по 1, Finder по 3, термостат 1. Итого 45 из 48. Если Welrok окажутся по 3 модуля, третья Finder уже не влезет: тогда либо одну Finder не ставить, либо взять реле уже.</li>
-    <li><b>Розетки:</b> три Finder внутри щита, по одной на каждую фазу (на C16 ×3), и одна влагозащищённая ЭРА IP65 снаружи на корпусе. Наружная на своём C16 (четвёртый C16 докупается), один из трёх C20 остаётся в запасе.</li>
-    <li><b>Автоматы разложены по купленному набору:</b> C16 ×4 на три Finder и наружную розетку, C20 на ворота и беседку (третий C20 в запас), C10 на свет, камеры и обогрев. Фаза каждого задана его местом на гребёнке.</li>
+    <li><b>Раскладка по факту (примерка 05.10):</b> рейка 1 — S204, УЗИП, кросс-модуль (12 мод.); рейка 2 — три Welrok по 2 мод. и две Finder по 3 (12); рейка 3 — Iskra, ДИФ-103, Finder (11, 1 свободен); рейка 4 — 8 автоматов (4 свободно). Занято 43 из 48.</li>
+    <li><b>Обогрев пока не ставится.</b> Термостат и нагреватель вынуты. Если вернёшь: нагреватель на раму внизу слева (место оставлено), термостат 1 мод. на свободное место рейки 3, его C10 — на рейку 4 после «камер» (тогда он сядет на L3 по гребёнке), гребёнку резать на 9 модулей вместо 8.</li>
+    <li><b>Розетки:</b> три Finder внутри щита, по одной на каждую фазу (на C16 ×3): две на рейке 2 рядом с реле, одна на рейке 3. Плюс влагозащищённая ЭРА IP65 снаружи на корпусе на своём C16. Пятый C16 и лишний кросс-модуль — запас.</li>
+    <li><b>Автоматы:</b> C16 ×4 на три Finder и наружную розетку, C20 ×2 на ворота и беседку, C10 ×2 на свет и камеры. Фаза каждого задана его местом на гребёнке (гребёнка обрезана на 8 модулей): L1 — роз. 1, свет, нар. розетка; L2 — роз. 2, ворота, камеры; L3 — роз. 3, беседка.</li>
     <li><b>Расщепление PEN одно:</b> жила PEN кабеля 4×10 садится на шину PE, оттуда синяя перемычка 10 мм² на клемму N вводного автомата. Больше N и PE нигде не соединяются.</li>
     <li><b>Шина N групп принимает только нули ветки «остальное»</b> (после ДИФ-103). Нули дома, реле и УЗИП идут на кросс-модуль. Перепутаешь, ДИФ-103 будет выбивать.</li>
     <li><b>УЗИП включён параллельно.</b> Через него ничего не проходит дальше: реле и дифавтоматы питаются с кросс-модуля. Единственный его «выход» на шину PE, туда он сбрасывает импульс.</li>
@@ -155,22 +155,21 @@ const VD={x0:640,x1:692};                  // right vertical duct lanes
 
 const CC={L1:'var(--l1)',L2:'var(--l2)',L3:'var(--l3)',N:'var(--n)',PE:'var(--pe)'};
 const CN={L1:'L1 красный',L2:'L2 чёрный',L3:'L3 белый',N:'N синий',PE:'PE жёлто-зелёный'};
-const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита',4:'Ветка «дом»',5:'Ветка «всё остальное»',6:'Сервис и обогрев'};
+const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита',4:'Ветка «дом»',5:'Ветка «всё остальное»'};
 
 // ---- devices on rails
 const DEV=[
  {id:'S204',rail:0,pos:0,w:4,name:'ABB S204 C25',sub:'вводной автомат 4P',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
  {id:'UZIP',rail:0,pos:4,w:4,name:'УЗИП Citel DS134R',sub:'тип 1+2, параллельно',top:['L1','L2','L3','N'],bot:['PE']},
  {id:'X',rail:0,pos:8,w:4,name:'Кросс-модуль 4P',sub:'100 А, раздача',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N'],both:true},
- {id:'R1',rail:1,pos:0,w:2,name:'Реле L1',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
- {id:'R2',rail:1,pos:2,w:2,name:'Реле L2',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
- {id:'R3',rail:1,pos:4,w:2,name:'Реле L3',sub:'Welrok d2-50',top:['L'],bot:['L','N'],q:true},
- {id:'TS',rail:1,pos:6,w:1,name:'Терм.',sub:'SILART',top:['L'],bot:['L']},
- {id:'FND1',rail:1,pos:7,w:3,name:'Розетка Finder L1',sub:'в щите, IP20',top:['L','N','PE'],bot:[],q:true},
- {id:'FREE1',rail:1,pos:10,w:2,free:true},
+ {id:'R1',rail:1,pos:0,w:2,name:'Реле L1',sub:'Welrok d2-50',top:['L'],bot:['L','N']},
+ {id:'R2',rail:1,pos:2,w:2,name:'Реле L2',sub:'Welrok d2-50',top:['L'],bot:['L','N']},
+ {id:'R3',rail:1,pos:4,w:2,name:'Реле L3',sub:'Welrok d2-50',top:['L'],bot:['L','N']},
+ {id:'FND1',rail:1,pos:6,w:3,name:'Розетка Finder L1',sub:'в щите, IP20',top:['L','N','PE'],bot:[]},
+ {id:'FND3',rail:1,pos:9,w:3,name:'Розетка Finder L3',sub:'в щите, IP20',top:['L','N','PE'],bot:[]},
  {id:'ISK',rail:2,pos:0,w:4,name:'Iskra RFI4 C25 / 300 мА',sub:'ветка ДОМ',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
  {id:'D103',rail:2,pos:4,w:4,name:'ДИФ-103 C40 / 30 мА A',sub:'ветка ВСЁ ОСТАЛЬНОЕ',top:['L1','L2','L3','N'],bot:['L1','L2','L3','N']},
- {id:'FND2',rail:2,pos:8,w:3,name:'Розетка Finder L2',sub:'в щите, IP20',top:['L','N','PE'],bot:[],q:true},
+ {id:'FND2',rail:2,pos:8,w:3,name:'Розетка Finder L2',sub:'в щите, IP20',top:['L','N','PE'],bot:[]},
  {id:'FREE2',rail:2,pos:11,w:1,free:true},
  {id:'A1',rail:3,pos:0,w:1,name:'C16',sub:'роз. 1',top:['L'],bot:['L']},
  {id:'A2',rail:3,pos:1,w:1,name:'C16',sub:'роз. 2',top:['L'],bot:['L']},
@@ -179,14 +178,13 @@ const DEV=[
  {id:'A5',rail:3,pos:4,w:1,name:'C20',sub:'ворота',top:['L'],bot:['L']},
  {id:'A6',rail:3,pos:5,w:1,name:'C20',sub:'беседка',top:['L'],bot:['L']},
  {id:'A7',rail:3,pos:6,w:1,name:'C16',sub:'нар. роз.',top:['L'],bot:['L']},
- {id:'A8',rail:3,pos:7,w:1,name:'C10',sub:'обогрев',top:['L'],bot:['L']},
- {id:'A9',rail:3,pos:8,w:1,name:'C10',sub:'камеры',top:['L'],bot:['L']},
- {id:'FND3',rail:3,pos:9,w:3,name:'Розетка Finder L3',sub:'в щите, IP20',top:['L','N','PE'],bot:[],q:true},
+ {id:'A9',rail:3,pos:7,w:1,name:'C10',sub:'камеры',top:['L'],bot:['L']},
+ {id:'FREE3',rail:3,pos:8,w:4,free:true},
 ];
 const COMBX=[0,1,2]; // comb feed terminals above A1..A3
 // bottom row items: glands + heater
 const BOT=[
- {id:'HEAT',x:20,w:118,name:'Нагреватель 150 Вт',sub:'на раме внизу',top:['L','N','PE'],kind:'box'},
+ {id:'HEATP',x:20,w:118,kind:'box',free:true,lbl:'под нагреватель'},
  {id:'GIN',x:150,w:58,name:'M32',sub:'ввод 4×10',top:['L1','L2','L3','PEN'],kind:'gland'},
  {id:'GHOME',x:214,w:62,name:'M32',sub:'дом 5×6',top:['L1','L2','L3','N','PE'],kind:'gland'},
  {id:'GOUT',x:282,w:48,name:'M20',sub:'нар. роз.',top:['L','N','PE'],kind:'gland'},
@@ -245,7 +243,7 @@ add('D103.bot.L1','COMB.L1','L1','ПуГВ 6',5,'Питание гребёнки
 add('D103.bot.L2','COMB.L2','L2','ПуГВ 6',5,'');
 add('D103.bot.L3','COMB.L3','L3','ПуГВ 6',5,'');
 add('D103.bot.N','NB','N','ПуГВ 6',5,'Единственный вход на шину N групп.');
-const GR=[['A4','G4','L1','ВВГ 3×1,5'],['A5','G5','L2','ВВГ 3×2,5'],['A6','G6','L3','ВВГ 3×2,5'],['A7','GOUT','L1','ВВГ 3×2,5'],['A9','G9','L3','ВВГ 3×1,5']];
+const GR=[['A4','G4','L1','ВВГ 3×1,5'],['A5','G5','L2','ВВГ 3×2,5'],['A6','G6','L3','ВВГ 3×2,5'],['A7','GOUT','L1','ВВГ 3×2,5'],['A9','G9','L2','ВВГ 3×1,5']];
 GR.forEach(([a,g,c,sq])=>{
   add(a+'.bot.L',g+'.top.L',c,sq,5,'Фаза этого автомата задана гребёнкой.');
   add('NB',g+'.top.N','N',sq,5,'Ноль группы только на шину N групп.');
@@ -256,13 +254,7 @@ GR.forEach(([a,g,c,sq])=>{
   add('NB',f+'.top.N','N','ПуГВ 2,5',5,'');
   add('PE',f+'.top.PE','PE','ПуГВ 2,5 ж/з',5,'');
 });
-// 6 сервис
-add('A8.bot.L','TS.top.L','L1','ПуГВ 1,5',6,'C10 «обогрев» питает термостат. Фаза L2 по месту на гребёнке.');
-add('TS.bot.L','HEAT.top.L','L1','ПуГВ 1,5',6,'Термостат замыкает фазу на нагреватель при холоде.');
-add('NB','HEAT.top.N','N','ПуГВ 1,5',6,'');
-add('PE','HEAT.top.PE','PE','ПуГВ 1,5 ж/з',6,'');
-// phases of serv line are L2 by comb position (A8 is 8th = L2)
-W.forEach(w=>{ if(w.f.startsWith('A8.')||w.f.startsWith('TS.')) w.c='L2'; });
+// обогрев (термостат + нагреватель) пока не ставится: место под нагреватель внизу слева, термостат 1 мод. на свободное место рейки 3
 
 // ---- geometry helpers
 const devById={}; DEV.forEach(d=>devById[d.id]=d); BOT.forEach(d=>devById[d.id]=d);
@@ -339,14 +331,14 @@ svg.appendChild(el('text',{x:VD.x0+2,y:ductY(0)-6,class:'ds'},'канал'));
 svg.appendChild(el('circle',{cx:PEBUS.x+PEBUS.w+22,cy:PEBUS.y0-16,r:4,class:'term'}));
 svg.appendChild(el('text',{x:PEBUS.x+PEBUS.w+30,y:PEBUS.y0-12,class:'ds'},'корпус'));
 // comb
-const cy=railY(3)-10; svg.appendChild(el('line',{x1:RX+2,y1:cy,x2:RX+9*U-2,y2:cy,class:'comb',stroke:'var(--devline)'}));
-[['L1',0],['L2',1],['L3',2]].forEach(([c,i])=>{ for(let m=i;m<9;m+=3){ if(c==='L3') svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:'var(--l3halo)','stroke-width':4.5})); svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:CC[c],'stroke-width':2.5})); } });
+const cy=railY(3)-10; svg.appendChild(el('line',{x1:RX+2,y1:cy,x2:RX+8*U-2,y2:cy,class:'comb',stroke:'var(--devline)'}));
+[['L1',0],['L2',1],['L3',2]].forEach(([c,i])=>{ for(let m=i;m<8;m+=3){ if(c==='L3') svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:'var(--l3halo)','stroke-width':4.5})); svg.appendChild(el('line',{x1:RX+(m+0.5)*U,y1:cy,x2:RX+(m+0.5)*U,y2:railY(3),stroke:CC[c],'stroke-width':2.5})); } });
 svg.appendChild(el('text',{x:RX-10,y:cy+3,class:'ds','text-anchor':'end'},'гребёнка 3ф'));
 // devices
 const devGroup=el('g',{}); svg.appendChild(devGroup);
 function drawDev(d){
   const r=devRect(d); const g=el('g',{class:'devg','data-id':d.id});
-  if(d.free){ g.appendChild(el('rect',{x:r.x+2,y:r.y+2,width:r.w-4,height:r.h-4,rx:3,class:'dev free'})); g.appendChild(el('text',{x:r.x+r.w/2,y:r.y+r.h/2+4,class:'ds','text-anchor':'middle'},'своб. '+d.w)); devGroup.appendChild(g); return; }
+  if(d.free){ g.appendChild(el('rect',{x:r.x+2,y:r.y+2,width:r.w-4,height:r.h-4,rx:3,class:'dev free'})); g.appendChild(el('text',{x:r.x+r.w/2,y:r.y+r.h/2+4,class:'ds','text-anchor':'middle'},d.lbl||('своб. '+d.w))); devGroup.appendChild(g); return; }
   g.appendChild(el('rect',{x:r.x+1.5,y:r.y+(d.kind?0:12),width:r.w-3,height:d.kind?r.h:r.h-24,rx:3,class:d.kind==='gland'?'gland':'dev'}));
   const cx=r.x+r.w/2, small=r.w<=U;
   if(small){ g.appendChild(el('text',{x:cx,y:r.y+38,class:'dl','text-anchor':'middle',style:'font-size:9.5px'},d.name)); g.appendChild(el('text',{x:cx,y:r.y+50,class:'ds','text-anchor':'middle',style:'font-size:8px'},d.sub)); }
@@ -366,12 +358,12 @@ W.forEach((w,i)=>{ w.i=i+1; w.pts=route(w); const d='M'+w.pts.map(p=>p.join(' ')
   g.appendChild(el('path',{d,class:'w hit'})); wireGroup.appendChild(g); w.g=g; });
 
 // ---- interaction
-const condOn={L1:1,L2:1,L3:1,N:1,PE:1}, stOn={1:1,2:1,3:1,4:1,5:1,6:1}; let maxStep=6, sel=null;
+const condOn={L1:1,L2:1,L3:1,N:1,PE:1}, stOn={1:1,2:1,3:1,4:1,5:1}; let maxStep=5, sel=null;
 const info=document.getElementById('info'), tbody=document.querySelector('#tbl tbody');
 function label(ep){ if(ep==='PE')return 'шина PE (ГЗШ)'; if(ep==='NB')return 'шина N групп'; if(ep==='CORP')return 'корпус щита'; if(ep.startsWith('COMB.'))return 'гребёнка, '+ep.slice(5); const [id,a,b]=ep.split('.'); const d=devById[id]; const t=b||a; return d.name+(d.sub?' ('+d.sub+')':'')+', клемма '+t+(b?(a==='top'?' верх':' низ'):''); }
 function visible(w){ return condOn[w.c]&&stOn[w.st]; }
 function apply(){ W.forEach(w=>{ const v=visible(w); w.g.classList.toggle('dim',!v); w.g.classList.toggle('hl',sel===w.i); }); renderTable(); }
-function renderTable(){ tbody.innerHTML=''; let last=null; W.filter(visible).forEach(w=>{ const cur=maxStep<6&&w.st===maxStep; if(w.st!==last){ last=w.st; const h=document.createElement('tr'); h.className='grp'+(cur?' cur':''); h.innerHTML=`<td colspan="6">Этап ${w.st}. ${STN[w.st]}</td>`; tbody.appendChild(h); }
+function renderTable(){ tbody.innerHTML=''; let last=null; W.filter(visible).forEach(w=>{ const cur=maxStep<5&&w.st===maxStep; if(w.st!==last){ last=w.st; const h=document.createElement('tr'); h.className='grp'+(cur?' cur':''); h.innerHTML=`<td colspan="6">Этап ${w.st}. ${STN[w.st]}</td>`; tbody.appendChild(h); }
   const tr=document.createElement('tr'); tr.className='row'+(sel===w.i?' sel':'')+(cur?' cur':''); tr.dataset.i=w.i;
   tr.innerHTML=`<td class="num">${w.i}</td><td class="num">${w.st}</td><td>${label(w.f)} → ${label(w.t)}</td><td><span class="sw ${w.c==='PE'?'pe':''}" style="border-color:${CC[w.c]}"></span> ${w.c}</td><td class="mono">${w.sq}</td><td class="hint">${w.n||''}</td>`;
   tr.addEventListener('click',()=>{ sel=sel===w.i?null:w.i; apply(); showWire(w); }); tbody.appendChild(tr); }); }
@@ -385,9 +377,8 @@ devGroup.addEventListener('click',e=>{ const g=e.target.closest('g.devg'); if(!g
 document.querySelectorAll('[data-cond]').forEach(b=>b.addEventListener('click',()=>{ condOn[b.dataset.cond]^=1; b.classList.toggle('on'); apply(); }));
 document.querySelectorAll('[data-stage]').forEach(b=>b.addEventListener('click',()=>{ stOn[b.dataset.stage]^=1; b.classList.toggle('on'); apply(); }));
 const step=document.getElementById('step'), stepname=document.getElementById('stepname');
-step.addEventListener('input',()=>{ maxStep=+step.value; for(const k in stOn) stOn[k]=(+k<=maxStep)?1:0; document.querySelectorAll('[data-stage]').forEach(b=>b.classList.toggle('on',+b.dataset.stage<=maxStep)); stepname.textContent=maxStep===0?'Только раскладка, без проводов':(maxStep===6?'Все этапы':'Этапы 1–'+maxStep+': '+STN[maxStep]); apply(); });
-document.getElementById('reset').addEventListener('click',()=>{ for(const k in condOn)condOn[k]=1; for(const k in stOn)stOn[k]=1; maxStep=6; step.value=6; stepname.textContent='Все этапы'; sel=null; document.querySelectorAll('.chip[data-cond],.chip[data-stage]').forEach(b=>b.classList.add('on')); apply(); showWire(null); });
+step.addEventListener('input',()=>{ maxStep=+step.value; for(const k in stOn) stOn[k]=(+k<=maxStep)?1:0; document.querySelectorAll('[data-stage]').forEach(b=>b.classList.toggle('on',+b.dataset.stage<=maxStep)); stepname.textContent=maxStep===0?'Только раскладка, без проводов':(maxStep===5?'Все этапы':'Этапы 1–'+maxStep+': '+STN[maxStep]); apply(); });
+document.getElementById('reset').addEventListener('click',()=>{ for(const k in condOn)condOn[k]=1; for(const k in stOn)stOn[k]=1; maxStep=5; step.value=5; stepname.textContent='Все этапы'; sel=null; document.querySelectorAll('.chip[data-cond],.chip[data-stage]').forEach(b=>b.classList.add('on')); apply(); showWire(null); });
 apply();
 })();
 </script>
-</body></html>
