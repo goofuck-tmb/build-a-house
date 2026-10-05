@@ -97,11 +97,14 @@
     <button class="chip on" data-stage="1">1 Земля</button>
     <button class="chip on" data-stage="2">2 Ввод</button>
     <button class="chip on" data-stage="3">3 Защита</button>
-    <button class="chip on" data-stage="4">4 Дом</button>
-    <button class="chip on" data-stage="5">5 Остальное</button>
+    <button class="chip on" data-stage="4">4 Реле → дифы</button>
+    <button class="chip on" data-stage="5">5 Дом</button>
+    <button class="chip on" data-stage="6">6 Гребёнка и N</button>
+    <button class="chip on" data-stage="7">7 Розетки в щите</button>
+    <button class="chip on" data-stage="8">8 Группы наружу</button>
   </div>
   <div class="steps"><span class="t">Пошагово</span>
-    <input type="range" id="step" min="0" max="5" value="5" aria-label="Показать этапы до">
+    <input type="range" id="step" min="0" max="8" value="8" aria-label="Показать этапы до">
     <span class="stepname" id="stepname">Все этапы</span>
     <button class="chip" id="reset">Сбросить</button>
   </div>
@@ -136,7 +139,8 @@
     <li><b>Шина N групп принимает только нули ветки «остальное»</b> (после ДИФ-103). Нули дома, реле и УЗИП идут на кросс-модуль. Перепутаешь, ДИФ-103 будет выбивать.</li>
     <li><b>УЗИП включён параллельно.</b> Через него ничего не проходит дальше: реле и дифавтоматы питаются с кросс-модуля. Единственный его «выход» на шину PE, туда он сбрасывает импульс.</li>
     <li><b>Провода УЗИП короткие:</b> от кросс-модуля к УЗИП и от УЗИП к шине PE в сумме не длиннее 0,5 м.</li>
-    <li><b>Выход каждого реле идёт на два дифа</b> одним сдвоенным наконечником НШВИ(2) 6 мм². Проверь, что клемма Welrok его принимает, иначе поставь между ними клеммник.</li>
+    <li><b>Выход каждого реле идёт на два дифа</b> одним сдвоенным наконечником НШВИ(2) 6 мм², поэтому оба провода собраны в один этап 4: обжимаешь и сажаешь их за один раз. Проверь, что клемма Welrok принимает сдвоенный наконечник, иначе поставь между ними клеммник.</li>
+    <li><b>Этапы — это порядок сборки:</b> 1 земля → 2 ввод → 3 УЗИП и реле → 4 выходы реле на дифы → 5 дом → 6 гребёнка и шина N → 7 розетки в щите → 8 группы наружу. Ползунок «Пошагово» показывает провода до выбранного этапа, текущий этап подсвечен в таблице.</li>
     <li><b>Кабели ВВГ (ввод, дом, группы) заводятся в клеммы без наконечников:</b> они монолитные. НШВИ только на гибкий ПуГВ внутри щита.</li>
     <li><b>Цвета фаз:</b> L1 красный, L2 чёрный, L3 белый (коричневого и серого в продаже не было; ГОСТ это допускает). Белый ни с чем не путать: N только синий, PE только жёлто-зелёный. На концы фазных проводов бирки L1/L2/L3.</li>
     <li>Момент затяжки клемм смотри в паспорте аппарата, обычно 2–3 Н·м. Недотянутая клемма греется.</li>
@@ -155,7 +159,7 @@ const VD={x0:640,x1:692};                  // right vertical duct lanes
 
 const CC={L1:'var(--l1)',L2:'var(--l2)',L3:'var(--l3)',N:'var(--n)',PE:'var(--pe)'};
 const CN={L1:'L1 красный',L2:'L2 чёрный',L3:'L3 белый',N:'N синий',PE:'PE жёлто-зелёный'};
-const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита',4:'Ветка «дом»',5:'Ветка «всё остальное»'};
+const STN={1:'Земля и расщепление',2:'Ввод',3:'Защита: УЗИП и реле',4:'Выходы реле на оба дифавтомата',5:'Ветка «дом»',6:'Гребёнка и шина N',7:'Розетки в щите',8:'Группы наружу'};
 
 // ---- devices on rails
 const DEV=[
@@ -224,38 +228,42 @@ add('X.L3','R3.top.L','L3','ПуГВ 6',3,'');
 add('R1.bot.N','X.N','N','ПуГВ 1,5',3,'Реле нужен ноль для измерения. Ток по нему не идёт.');
 add('R2.bot.N','X.N','N','ПуГВ 1,5',3,'');
 add('R3.bot.N','X.N','N','ПуГВ 1,5',3,'');
-// 4 дом
-add('R1.bot.L','ISK.top.L1','L1','ПуГВ 6',4,'Выход реле. В этой же клемме второй провод на ДИФ-103: сдвоенный НШВИ(2).');
-add('R2.bot.L','ISK.top.L2','L2','ПуГВ 6',4,'');
-add('R3.bot.L','ISK.top.L3','L3','ПуГВ 6',4,'');
+// 4 выходы реле: оба провода из одной клеммы (сдвоенный НШВИ(2)) делаются за один раз
+add('R1.bot.L','ISK.top.L1','L1','ПуГВ 6',4,'Выход реле L1. В одной клемме два провода одним сдвоенным НШВИ(2) 6: этот на Iskra и следующий на ДИФ-103. Обжимай оба сразу.');
+add('R1.bot.L','D103.top.L1','L1','ПуГВ 6',4,'Второй провод из той же клеммы реле L1 (тот же сдвоенный наконечник).');
+add('R2.bot.L','ISK.top.L2','L2','ПуГВ 6',4,'Выход реле L2, сдвоенный НШВИ(2) с проводом на ДИФ-103.');
+add('R2.bot.L','D103.top.L2','L2','ПуГВ 6',4,'Второй провод из клеммы реле L2.');
+add('R3.bot.L','ISK.top.L3','L3','ПуГВ 6',4,'Выход реле L3, сдвоенный НШВИ(2) с проводом на ДИФ-103.');
+add('R3.bot.L','D103.top.L3','L3','ПуГВ 6',4,'Второй провод из клеммы реле L3.');
 add('X.N','ISK.top.N','N','ПуГВ 6',4,'Ноль на дом берётся с кросс-модуля, не с шины N групп.');
-add('ISK.bot.L1','GHOME.top.L1','L1','ВВГ 5×6',4,'Кабель на будущий домовой щит.');
-add('ISK.bot.L2','GHOME.top.L2','L2','ВВГ 5×6',4,'');
-add('ISK.bot.L3','GHOME.top.L3','L3','ВВГ 5×6',4,'');
-add('ISK.bot.N','GHOME.top.N','N','ВВГ 5×6',4,'');
-add('PE','GHOME.top.PE','PE','ВВГ 5×6, жила PE',4,'PE дома напрямую с ГЗШ, минуя дифавтомат.');
-// 5 остальное
-add('R1.bot.L','D103.top.L1','L1','ПуГВ 6',5,'Второй провод из клеммы реле (сдвоенный НШВИ).');
-add('R2.bot.L','D103.top.L2','L2','ПуГВ 6',5,'');
-add('R3.bot.L','D103.top.L3','L3','ПуГВ 6',5,'');
-add('X.N','D103.top.N','N','ПуГВ 6',5,'');
-add('D103.bot.L1','COMB.L1','L1','ПуГВ 6',5,'Питание гребёнки. Дальше фазы расходятся по автоматам через штырьки.');
-add('D103.bot.L2','COMB.L2','L2','ПуГВ 6',5,'');
-add('D103.bot.L3','COMB.L3','L3','ПуГВ 6',5,'');
-add('D103.bot.N','NB','N','ПуГВ 6',5,'Единственный вход на шину N групп.');
+add('X.N','D103.top.N','N','ПуГВ 6',4,'Ноль ДИФ-103 тоже с кросс-модуля.');
+// 5 дом
+add('ISK.bot.L1','GHOME.top.L1','L1','ВВГ 5×6',5,'Кабель на будущий домовой щит.');
+add('ISK.bot.L2','GHOME.top.L2','L2','ВВГ 5×6',5,'');
+add('ISK.bot.L3','GHOME.top.L3','L3','ВВГ 5×6',5,'');
+add('ISK.bot.N','GHOME.top.N','N','ВВГ 5×6',5,'');
+add('PE','GHOME.top.PE','PE','ВВГ 5×6, жила PE',5,'PE дома напрямую с ГЗШ, минуя дифавтомат.');
+// 6 гребёнка и шина N
+add('D103.bot.L1','COMB.L1','L1','ПуГВ 6',6,'Питание гребёнки. Дальше фазы расходятся по автоматам через штырьки.');
+add('D103.bot.L2','COMB.L2','L2','ПуГВ 6',6,'');
+add('D103.bot.L3','COMB.L3','L3','ПуГВ 6',6,'');
+add('D103.bot.N','NB','N','ПуГВ 6',6,'Единственный вход на шину N групп.');
 const GR=[['A4','G4','L1','ВВГ 3×1,5'],['A5','G5','L2','ВВГ 3×2,5'],['A6','G6','L3','ВВГ 3×2,5'],['A7','GOUT','L1','ВВГ 3×2,5'],['A9','G9','L2','ВВГ 3×1,5']];
+// 8 группы наружу (кабели ВВГ через гермовводы)
 GR.forEach(([a,g,c,sq])=>{
-  add(a+'.bot.L',g+'.top.L',c,sq,5,'Фаза этого автомата задана гребёнкой.');
-  add('NB',g+'.top.N','N',sq,5,'Ноль группы только на шину N групп.');
-  add('PE',g+'.top.PE','PE',sq,5,'PE группы на ГЗШ.');
+  add(a+'.bot.L',g+'.top.L',c,sq,8,'Фаза этого автомата задана гребёнкой.');
+  add('NB',g+'.top.N','N',sq,8,'Ноль группы только на шину N групп.');
+  add('PE',g+'.top.PE','PE',sq,8,'PE группы на ГЗШ.');
 });
+// 7 розетки в щите
 [['A1','FND1','L1'],['A2','FND2','L2'],['A3','FND3','L3']].forEach(([a,f,c])=>{
-  add(a+'.bot.L',f+'.top.L',c,'ПуГВ 2,5',5,'Розетка внутри щита на фазе '+c+'. Три розетки нагружают три разные фазы.');
-  add('NB',f+'.top.N','N','ПуГВ 2,5',5,'');
-  add('PE',f+'.top.PE','PE','ПуГВ 2,5 ж/з',5,'');
+  add(a+'.bot.L',f+'.top.L',c,'ПуГВ 2,5',7,'Розетка внутри щита на фазе '+c+'. Три розетки нагружают три разные фазы.');
+  add('NB',f+'.top.N','N','ПуГВ 2,5',7,'');
+  add('PE',f+'.top.PE','PE','ПуГВ 2,5 ж/з',7,'');
 });
 // обогрев (термостат + нагреватель) пока не ставится: место под нагреватель внизу слева, термостат 1 мод. на свободное место рейки 3
 
+W.sort((a,b)=>a.st-b.st); // нумерация проводов по этапам
 // ---- geometry helpers
 const devById={}; DEV.forEach(d=>devById[d.id]=d); BOT.forEach(d=>devById[d.id]=d);
 function devRect(d){ if(d.kind){return {x:d.x,y:BOTY,w:d.w,h:56};} return {x:RX+d.pos*U,y:railY(d.rail),w:d.w*U,h:RH}; }
@@ -358,12 +366,12 @@ W.forEach((w,i)=>{ w.i=i+1; w.pts=route(w); const d='M'+w.pts.map(p=>p.join(' ')
   g.appendChild(el('path',{d,class:'w hit'})); wireGroup.appendChild(g); w.g=g; });
 
 // ---- interaction
-const condOn={L1:1,L2:1,L3:1,N:1,PE:1}, stOn={1:1,2:1,3:1,4:1,5:1}; let maxStep=5, sel=null;
+const condOn={L1:1,L2:1,L3:1,N:1,PE:1}, stOn={1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1}; let maxStep=8, sel=null;
 const info=document.getElementById('info'), tbody=document.querySelector('#tbl tbody');
 function label(ep){ if(ep==='PE')return 'шина PE (ГЗШ)'; if(ep==='NB')return 'шина N групп'; if(ep==='CORP')return 'корпус щита'; if(ep.startsWith('COMB.'))return 'гребёнка, '+ep.slice(5); const [id,a,b]=ep.split('.'); const d=devById[id]; const t=b||a; return d.name+(d.sub?' ('+d.sub+')':'')+', клемма '+t+(b?(a==='top'?' верх':' низ'):''); }
 function visible(w){ return condOn[w.c]&&stOn[w.st]; }
 function apply(){ W.forEach(w=>{ const v=visible(w); w.g.classList.toggle('dim',!v); w.g.classList.toggle('hl',sel===w.i); }); renderTable(); }
-function renderTable(){ tbody.innerHTML=''; let last=null; W.filter(visible).forEach(w=>{ const cur=maxStep<5&&w.st===maxStep; if(w.st!==last){ last=w.st; const h=document.createElement('tr'); h.className='grp'+(cur?' cur':''); h.innerHTML=`<td colspan="6">Этап ${w.st}. ${STN[w.st]}</td>`; tbody.appendChild(h); }
+function renderTable(){ tbody.innerHTML=''; let last=null; W.filter(visible).forEach(w=>{ const cur=maxStep<8&&w.st===maxStep; if(w.st!==last){ last=w.st; const h=document.createElement('tr'); h.className='grp'+(cur?' cur':''); h.innerHTML=`<td colspan="6">Этап ${w.st}. ${STN[w.st]}</td>`; tbody.appendChild(h); }
   const tr=document.createElement('tr'); tr.className='row'+(sel===w.i?' sel':'')+(cur?' cur':''); tr.dataset.i=w.i;
   tr.innerHTML=`<td class="num">${w.i}</td><td class="num">${w.st}</td><td>${label(w.f)} → ${label(w.t)}</td><td><span class="sw ${w.c==='PE'?'pe':''}" style="border-color:${CC[w.c]}"></span> ${w.c}</td><td class="mono">${w.sq}</td><td class="hint">${w.n||''}</td>`;
   tr.addEventListener('click',()=>{ sel=sel===w.i?null:w.i; apply(); showWire(w); }); tbody.appendChild(tr); }); }
@@ -377,8 +385,8 @@ devGroup.addEventListener('click',e=>{ const g=e.target.closest('g.devg'); if(!g
 document.querySelectorAll('[data-cond]').forEach(b=>b.addEventListener('click',()=>{ condOn[b.dataset.cond]^=1; b.classList.toggle('on'); apply(); }));
 document.querySelectorAll('[data-stage]').forEach(b=>b.addEventListener('click',()=>{ stOn[b.dataset.stage]^=1; b.classList.toggle('on'); apply(); }));
 const step=document.getElementById('step'), stepname=document.getElementById('stepname');
-step.addEventListener('input',()=>{ maxStep=+step.value; for(const k in stOn) stOn[k]=(+k<=maxStep)?1:0; document.querySelectorAll('[data-stage]').forEach(b=>b.classList.toggle('on',+b.dataset.stage<=maxStep)); stepname.textContent=maxStep===0?'Только раскладка, без проводов':(maxStep===5?'Все этапы':'Этапы 1–'+maxStep+': '+STN[maxStep]); apply(); });
-document.getElementById('reset').addEventListener('click',()=>{ for(const k in condOn)condOn[k]=1; for(const k in stOn)stOn[k]=1; maxStep=5; step.value=5; stepname.textContent='Все этапы'; sel=null; document.querySelectorAll('.chip[data-cond],.chip[data-stage]').forEach(b=>b.classList.add('on')); apply(); showWire(null); });
+step.addEventListener('input',()=>{ maxStep=+step.value; for(const k in stOn) stOn[k]=(+k<=maxStep)?1:0; document.querySelectorAll('[data-stage]').forEach(b=>b.classList.toggle('on',+b.dataset.stage<=maxStep)); stepname.textContent=maxStep===0?'Только раскладка, без проводов':(maxStep===8?'Все этапы':'Этапы 1–'+maxStep+': '+STN[maxStep]); apply(); });
+document.getElementById('reset').addEventListener('click',()=>{ for(const k in condOn)condOn[k]=1; for(const k in stOn)stOn[k]=1; maxStep=8; step.value=8; stepname.textContent='Все этапы'; sel=null; document.querySelectorAll('.chip[data-cond],.chip[data-stage]').forEach(b=>b.classList.add('on')); apply(); showWire(null); });
 apply();
 })();
 </script>
